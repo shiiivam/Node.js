@@ -1,83 +1,65 @@
-//it will returen a function which on call will return a object
-const express = require('express');
+const mongoose = require('mongoose');
 
-//Now on calling the app function it will return an object whith the help of which we can access different functions.
-const app = express();
-
-var courses = ['maths', 'bsc', 'cs'];
-
-// //the get('url',routeHandler or simply a call back function)
-// app.get('/',(req,res)=>{
-//     res.send("Hello world");
-// });
-
-// //Handling some more requests
-// app.get('/api/courses',(req,res)=>{
-//     res.send([1,2,3]);
-//     //responding with an array of numbers
-// });
-
-// /*ROUTE PARAMETERS: The route parameters are the parameters passed in the url.
-// We use ROUTE parameters for extracting essential or required values*/
-
-// //Handling a url with id or other details
-// app.get('/api/courses/:id',(req,res)=>{
-//     res.send(`Listening to request id ${req.params.id} on port ${port}`);
-//     //responding with the id and the port
-// });
-
-// //Handling a url with many things like /year/month
-// app.get('/api/courses/:year/:month',(req,res)=>{
-//     res.send(req.params);
-//     //res.send(`The whole data received by the url is ${req.params}. Listening to request id ${req.params.year} and month ${req.params.month} on port ${port}`);
-//     //responding with the year and month mentioned in the url
-// });
-
-// /*QUERY STRING PARAMETERS: Query parameters are used to extract some string data from the url. 
-// We use query string parameters for extracting data from url for backend services*/
-// //Like sortBy or category
-// //Example : https://api/posts/2020/1?sortBy=name
-// app.get('/api/courses/:year/:month',(req,res)=>{
-//     res.send(req.query);
-//     //Responding with the query
-// });
+//Not working 
+// mongoose.connect('mongodb://localhost/playground');
+//     .then(()=>console.log('successfully connected to mongodb'));
+//     .catch(err=>console.error('Could not connect to mongodb',err));
 
 
-app.get('/api/courses/:id',(req,res)=>{
-    res.send(`The course selected is ${courses[req.params.id]}`);
-    //Responding with the query 
+//Alternate Approach, using callback instead of promise
+mongoose.connect('mongodb://localhost/playground', function(err, db) {
+    if (err) {
+        console.log('Unable to connect to the server. Please start the server. Error:', err);
+    } else {
+        console.log('Connected to Server successfully!');
+    }
 });
 
-/*PORT: An environment variable is the part of the environment in which the process runs. It's value is set
-outside this application. 
+// const courseSchema = mongoose.Schema({
+//     name: String,
+//     author: String,
+//     tags:[String],
+//     Date:{type:Date, default:Date.now},
+//     isPublished:Boolean 
+// });
 
-In development evironment the port is assigned dynamically by the Hosting environment. it's not a fixed
-like we used to do till now W can't rely on port 3000 to be available. 
+// const Course = mongoose.model('course',courseSchema);
 
-In this application we have to read the value of the environment by process object. 
+// async function createCourse(){
+// const course = new Course({
+//     name:'Node.js Course',
+//     author:'Mosh',
+//     tags:['node','backend'],
+//     isPublished:true
+// });
 
-process.env.PORT
+// const result = await course.save();
+// console.log(result);
 
-The process object has a property env and the environment variable.
+// }
 
-SETTING ENVIRONMENT VARIABLE : 
+// createCourse();
 
-On cmd : set PORT= 5000 //OR any number
+// async function getCourses(){
+//     const courses = await Course
+//       .find({author:'Mosh'})
+//       .limit(10)
+//       .sort({name:1})
+//       .select({name:1});
+//       console.log(courses);
+// }
 
-*/
-//Environment variable PORT
-//If environment varibable is set take that value or set the port value 3000 
-const port = process.env.PORT || 3000;
+// getCourses();
 
+async function updateCourse(id){
+    const course = Course.findById(id);
+    if(!course) return;
+    course.set({
+        name:'Angular'
+    });
 
-app.listen(port,()=>console.log(`Listening port ${port}`));
+    const result = await Course.save();
+    console.log(result);
+}
 
-
-/* 
-Not working on my pc....
-
-NODEMON : Till now we have to restart the server manually after making any changes to our application
-this can be solved by just installing a package globally call Nodemon.
-After installing this package we can easily just go to the url it will restart the application automatically
-and we eill be able to see the changes that we had made in our app. Instead of running app with node run it with nodemon*/
-
+updateCourse('5f42681eb21d8f0d6cd97216');
